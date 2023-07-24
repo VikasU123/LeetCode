@@ -1,59 +1,50 @@
 class Solution {
-  public int myAtoi(String str) {
-    
-    final int len = str.length();
-    
-    if (len == 0){
-        return 0;
+    public int myAtoi(String s) {
+        int i = 0;
+        int n = s.length();
+
+        while (i < n && s.charAt(i) == ' ') { // skipping space characters at the beginning
+            i++;
+        }
+
+        int positive = 0;
+        int negative = 0;
+
+        if (i<n && s.charAt(i) == '+') {
+            positive++; // number of positive signs at the start in string
+            i++;
+        }
+
+        if (i<n && s.charAt(i) == '-') {
+            negative++; // number of negative signs at the start in string
+            i++;
+        }
+
+        double ans = 0;
+
+        while (i < n && s.charAt(i) >= '0' && s.charAt(i) <= '9') {
+            ans = ans * 10 + (s.charAt(i) - '0'); // (s.charAt(i) - '0') is converting character to integer
+            i++;
+        }
+
+        if (negative > 0) { // if negative sign exists
+            ans = -ans;
+        }
+        if (positive > 0 && negative > 0) { // if both +ve and -ve sign exist, Example: +-12
+            return 0;
+        }
+
+        int INT_MAX = (int) Math.pow(2, 31);
+        int INT_MIN = (int) Math.pow(-2, 31);
+
+        if (ans > INT_MAX) { // if ans > 2^31 - 1
+            ans = INT_MAX;
+        }
+
+        if (ans < INT_MIN) { // if ans < -2^31
+            ans = INT_MIN;
+        }
+
+        return (int) ans;
     }
-    
-    int index = 0;
-    
-    // skipping white spaces
-    while (index < len && str.charAt(index) == ' '){
-        ++index;
-    }
-    
-    boolean isNegative = false;
-    
-    // to handle sign cases
-    if (index < len) {
-      
-      if (str.charAt(index) == '-') {
-        isNegative = true;
-        ++index;
-      } else if (str.charAt(index) == '+'){
-          ++index;
-      }
-      
-    }
-    
-    int result = 0;
-    
-    // converting digit(in character form) to integer form
-    // iterate until non-digit character is not found or we can say iterate till found character is a digit
-    while (index < len && isDigit(str.charAt(index))) {
-      
-      /* str.charAt(index) - '0' is to convert the char digit into int digit eg: '5' - '0' --> 5
-      or else it will store the ASCII value of 5 i.e. 53,
-      so we do 53(ASCII of 5) - 48(ASCII of 0(zero)) to get 5 as int*/
-      int digit = str.charAt(index) - '0';
-      
-      // to avoid integer overflow
-      if (result > (Integer.MAX_VALUE / 10) || (result == (Integer.MAX_VALUE / 10) && digit > 7)){
-          return isNegative ? Integer.MIN_VALUE : Integer.MAX_VALUE;
-      }
-      
-      // adding digits at their desired place-value
-      result = (result * 10) + digit;
-      
-      ++index;
-    }
-      
-    return isNegative ? -result : result;
-  }
-  
-  private boolean isDigit(char ch) {
-    return ch >= '0' && ch <= '9';
-  }
 }
